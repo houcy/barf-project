@@ -275,8 +275,8 @@ class BinaryFile(object):
                 m.add_vma(section.header.sh_addr, bytearray(section.data()))
 
 
-        self._section_data_start = min(data_section_start, rodata_section_start, got_section_start, gotplt_section_start)
-        self._section_data_end = max(data_section_end, rodata_section_end, got_section_end, gotplt_section_end) - 1
+        self._section_data_start = min(data_section_start, rodata_section_start)
+        self._section_data_end = max(data_section_end, rodata_section_end) - 1
         self._section_data_memory = m
 
         f.close()
