@@ -25,9 +25,13 @@
 from barf.arch.arm.armbase import ArmImmediateOperand
 from barf.arch.x86.x86base import X86ImmediateOperand
 
+from hexagondisasm.common import HexagonInstruction
 
 def extract_branch_target(asm_instruction):
     address = None
+
+    if isinstance(asm_instruction, HexagonInstruction):
+        return extract_hexagon_target(asm_instruction)
 
     target_oprnd = asm_instruction.operands[0]
     if isinstance(target_oprnd, X86ImmediateOperand) or \
@@ -39,9 +43,22 @@ def extract_branch_target(asm_instruction):
 def extract_call_target(asm_instruction):
     address = None
 
+    if isinstance(asm_instruction, HexagonInstruction):
+        return extract_hexagon_target(asm_instruction)
+
     target_oprnd = asm_instruction.operands[0]
     if isinstance(target_oprnd, X86ImmediateOperand) or \
        isinstance(target_oprnd, ArmImmediateOperand):
         address = target_oprnd.immediate
 
     return address
+
+def extract_hexagon_target(inst):
+    if inst.template and inst.template.branch:
+        branch = inst.template.branch
+
+        return int(inst.get_real_operand(branch.target).value)
+        # The int conversion is needed, otherwise a long is returned and pydot fails when saving the CFG.
+
+    raise
+    # TODO: Check when this could happen.
