@@ -253,7 +253,7 @@ class BARF(object):
             arch_mode = self.binary.architecture_mode
 
         # Reload modules.
-        self._load(arch_mode=arch_mode)
+        # self._load(arch_mode=arch_mode)
 
         cfg, _ = self._recover_cfg(start=ea_start, end=ea_end, symbols=symbols, callback=callback)
 
