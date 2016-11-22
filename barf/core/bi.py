@@ -327,7 +327,7 @@ class BinaryFile(object):
         elif elf_file.header['e_machine'] == 'EM_ARM':
             return arch.ARCH_ARM
         else:
-            raise Exception("Machine not supported.")
+            return arch.ARCH_HEXAGON
 
     def _get_arch_mode_elf(self, elf_file):
         if elf_file.header['e_machine'] == 'EM_X86_64':
@@ -337,7 +337,7 @@ class BinaryFile(object):
         elif elf_file.header['e_machine'] == 'EM_ARM':
             return arch.ARCH_ARM_MODE_ARM
         else:
-            raise Exception("Machine not supported.")
+            return arch.ARCH_HEXAGON_MODE
 
     def _get_arch_pe(self, pe_file):
         # get arch

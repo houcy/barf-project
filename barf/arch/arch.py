@@ -34,6 +34,9 @@ ARCH_ARM = 1
 ARCH_ARM_MODE_ARM = 0
 ARCH_ARM_MODE_THUMB = 1
 
+ARCH_HEXAGON = 2
+ARCH_HEXAGON_MODE = 0
+
 
 class ArchitectureInformation(object):
 
