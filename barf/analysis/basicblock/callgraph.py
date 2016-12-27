@@ -7,6 +7,9 @@ from pydot import Node
 
 from barf.arch.x86.x86base import X86ImmediateOperand
 
+from hexagondisasm.common import HexagonInstruction
+from hexagondisasm.common import ImmediateTemplate
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,7 +57,23 @@ class CallGraph(object):
 
             for bb in cfg.basic_blocks:
                 for dinstr in bb:
-                    if dinstr.asm_instr.mnemonic == "call":
+
+                    if isinstance(dinstr.asm_instr, HexagonInstruction):
+                        if dinstr.asm_instr.template and dinstr.asm_instr.template.branch:
+                            branch = dinstr.asm_instr.template.branch
+
+                            if branch.target and isinstance(branch.target, ImmediateTemplate):
+                                target_operand = dinstr.asm_instr.get_real_operand(branch.target)
+                                target_addr = int(target_operand.value)
+
+                                edges.add(target_addr)
+                                graph.add_edge(cfg.start_address, target_addr, branch_type="direct")
+                            else:
+                                edges.add("unknown")
+
+                                graph.add_edge(cfg.start_address, "unknown", branch_type="indirect")
+
+                    elif dinstr.asm_instr.mnemonic == "call":
                         if isinstance(dinstr.asm_instr.operands[0], X86ImmediateOperand):
                             target_addr = dinstr.asm_instr.operands[0].immediate
 
