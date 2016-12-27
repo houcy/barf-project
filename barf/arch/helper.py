@@ -26,6 +26,8 @@ from barf.arch.arm.armbase import ArmImmediateOperand
 from barf.arch.x86.x86base import X86ImmediateOperand
 
 from hexagondisasm.common import HexagonInstruction
+from hexagondisasm.common import InstructionImmediate
+from hexagondisasm.common import InstructionRegister
 
 def extract_branch_target(asm_instruction):
     address = None
@@ -57,8 +59,20 @@ def extract_hexagon_target(inst):
     if inst.template and inst.template.branch:
         branch = inst.template.branch
 
-        return int(inst.get_real_operand(branch.target).value)
-        # The int conversion is needed, otherwise a long is returned and pydot fails when saving the CFG.
+        if branch.target is None:
+            # TODO: Hexagon issue: the LR case is not being handle correctly
+            # return 'LR'
+            return None
+
+        target_operand = inst.get_real_operand(branch.target)
+
+        if isinstance(target_operand, InstructionImmediate):
+            return int(target_operand.value)
+            # The int conversion is needed, otherwise a long is returned and pydot fails when saving the CFG.
+
+        if isinstance(target_operand, InstructionRegister):
+            # return target_operand.name
+            return None
 
     raise
     # TODO: Check when this could happen.
