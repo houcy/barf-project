@@ -164,6 +164,7 @@ class CGSimpleRenderer(CGRenderer):
         """
         try:
             dot_graph = Dot(**self.graph_format)
+            dot_graph.set_splines("line")
 
             # add nodes
             nodes = {}
